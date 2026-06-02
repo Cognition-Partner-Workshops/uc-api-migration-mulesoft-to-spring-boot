@@ -1,0 +1,376 @@
+openapi: 3.0.3
+info:
+  title: Employee Services API
+  description: |
+    OpenAPI 3.0 specification extracted from the MuleSoft RAML definition in
+    ts-java-mulesoft-employee-api. This is the SOURCE OF TRUTH for API parity
+    verification during the MuleSoft → Spring Boot migration.
+  version: "1.0.0"
+  contact:
+    name: Cognition Partner Workshops
+
+servers:
+  - url: http://localhost:8080
+    description: Local Spring Boot instance
+
+paths:
+  /oauth/token:
+    post:
+      operationId: getOAuthToken
+      summary: Generate OAuth2 access token
+      description: Accepts client credentials and returns a bearer token.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - grant_type
+                - client_id
+                - client_secret
+              properties:
+                grant_type:
+                  type: string
+                  enum: [client_credentials]
+                client_id:
+                  type: string
+                client_secret:
+                  type: string
+      responses:
+        '200':
+          description: Token generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          description: Invalid client credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /health:
+    get:
+      operationId: healthCheck
+      summary: Health check endpoint
+      description: Returns database connectivity status.
+      tags:
+        - System
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '503':
+          description: Service unavailable (database connectivity issue)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/employee/{employeeId}/goals:
+    get:
+      operationId: getEmployeeGoals
+      summary: Retrieve goals for a specific employee
+      tags:
+        - Employee
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/EmployeeId'
+      responses:
+        '200':
+          description: List of employee goals
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              example:
+                - "Build an Agentforce Agent using the new MCP protocol for integrations."
+        '401':
+          description: Unauthorized - invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: No goals found for employee
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: "No goals found for employee 74"
+
+  /api/employee/{employeeId}/learning-status:
+    get:
+      operationId: getEmployeeLearningStatus
+      summary: Get learning course status for an employee
+      tags:
+        - Employee
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/EmployeeId'
+      responses:
+        '200':
+          description: Learning status for the employee
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LearningStatus'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: No learning records found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/employee/{employeeId}/next-pay-date:
+    get:
+      operationId: getNextPayDate
+      summary: Get next pay date for an employee
+      tags:
+        - Employee
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/EmployeeId'
+      responses:
+        '200':
+          description: Next pay date information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayDateResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Employee not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/employee/{employeeId}/pto/balance:
+    get:
+      operationId: getPtoBalance
+      summary: Get PTO balance for an employee
+      tags:
+        - Employee
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/EmployeeId'
+      responses:
+        '200':
+          description: PTO balance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PtoBalanceResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Employee not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/employee/{employeeId}/pto/schedule:
+    post:
+      operationId: schedulePto
+      summary: Schedule PTO time for an employee
+      tags:
+        - Employee
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/EmployeeId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PtoScheduleRequest'
+      responses:
+        '200':
+          description: PTO scheduled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PtoScheduleResponse'
+        '400':
+          description: Invalid request (insufficient balance, invalid dates)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth2 bearer token from /oauth/token endpoint
+
+  parameters:
+    EmployeeId:
+      name: employeeId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Unique identifier for the employee
+
+  schemas:
+    TokenResponse:
+      type: object
+      required:
+        - access_token
+        - token_type
+        - expires_in
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string
+          enum: [Bearer]
+        expires_in:
+          type: integer
+          description: Token validity in seconds
+          example: 3600
+
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [UP, DOWN]
+        database:
+          type: string
+          description: Database connectivity status
+
+    LearningStatus:
+      type: object
+      properties:
+        employeeId:
+          type: string
+        courses:
+          type: array
+          items:
+            $ref: '#/components/schemas/CourseStatus'
+
+    CourseStatus:
+      type: object
+      properties:
+        courseName:
+          type: string
+        status:
+          type: string
+          enum: [NOT_STARTED, IN_PROGRESS, COMPLETED]
+        progress:
+          type: integer
+          minimum: 0
+          maximum: 100
+
+    PayDateResponse:
+      type: object
+      properties:
+        employeeId:
+          type: string
+        nextPayDate:
+          type: string
+          format: date
+        payFrequency:
+          type: string
+
+    PtoBalanceResponse:
+      type: object
+      properties:
+        employeeId:
+          type: string
+        balance:
+          type: number
+          format: double
+          description: Available PTO hours
+        used:
+          type: number
+          format: double
+        total:
+          type: number
+          format: double
+
+    PtoScheduleRequest:
+      type: object
+      required:
+        - startDate
+        - endDate
+        - hours
+      properties:
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        hours:
+          type: number
+          format: double
+
+    PtoScheduleResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        requestId:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        hoursScheduled:
+          type: number
+          format: double
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        errorCode:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
