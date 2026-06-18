@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
-public interface ApiClientRepository extends JpaRepository<ApiClient, Long> {
+public interface ApiClientRepository extends JpaRepository<ApiClient, Integer> {
 
     Optional<ApiClient> findByClientIdAndClientSecret(String clientId, String clientSecret);
 
