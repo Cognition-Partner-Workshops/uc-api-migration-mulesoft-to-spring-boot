@@ -13,7 +13,7 @@ public class EmployeePto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "employee_id", nullable = false)
     private String employeeId;
@@ -27,11 +27,11 @@ public class EmployeePto {
     @Column(name = "year", nullable = false)
     private Integer year;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

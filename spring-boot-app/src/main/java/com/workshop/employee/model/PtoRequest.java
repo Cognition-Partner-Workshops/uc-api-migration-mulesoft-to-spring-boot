@@ -15,7 +15,7 @@ public class PtoRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "employee_id", nullable = false)
     private String employeeId;
@@ -35,11 +35,11 @@ public class PtoRequest {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
