@@ -23,9 +23,9 @@ public class PtoRequest {
     private LocalDate endDate;
     @Column(nullable = false)
     private double hours;
-    private String status;
+    private String status = "APPROVED";
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     protected PtoRequest() {
     }
