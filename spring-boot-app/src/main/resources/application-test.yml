@@ -1,15 +1,17 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;NON_KEYWORDS=YEAR
     username: sa
     password:
     driver-class-name: org.h2.Driver
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
+  # The Flyway migration uses PostgreSQL-specific syntax (ON CONFLICT, SERIAL
+  # defaults) that H2 cannot parse; the test profile generates the schema from
+  # the JPA entities instead.
   flyway:
-    enabled: true
-    locations: classpath:db/migration
+    enabled: false
