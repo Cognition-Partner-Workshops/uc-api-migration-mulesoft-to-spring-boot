@@ -53,6 +53,16 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Database migrations -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
+
         <!-- H2 for tests -->
         <dependency>
             <groupId>com.h2database</groupId>
