@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Employee Directory</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="page-width">
+      <h1>Employee Directory</h1>
+    </div>
+  </header>
+
+  <main class="page-width directory-layout">
+    <aside class="employee-sidebar" aria-label="Employees">
+      <h2>Employees</h2>
+      <div id="employee-list" class="employee-list"></div>
+    </aside>
+
+    <section id="employee-panel" class="employee-panel" aria-live="polite">
+      <div id="error-banner" class="error-banner" role="alert" hidden></div>
+      <div id="placeholder" class="placeholder">
+        <h2>Select an employee</h2>
+        <p>Choose an employee to view their directory details.</p>
+      </div>
+      <div id="employee-details" hidden>
+        <div class="panel-heading">
+          <p class="eyebrow">Employee profile</p>
+          <h2 id="employee-title"></h2>
+        </div>
+
+        <div class="card-grid">
+          <article class="card goals-card">
+            <h3>Goals</h3>
+            <div id="goals-content"></div>
+          </article>
+
+          <article class="card learning-card">
+            <h3>Learning Status</h3>
+            <div id="learning-content"></div>
+          </article>
+
+          <article class="card">
+            <h3>Next Pay Date</h3>
+            <div id="pay-date-content"></div>
+          </article>
+
+          <article class="card">
+            <h3>PTO Balance</h3>
+            <div id="pto-content"></div>
+          </article>
+
+          <article class="card schedule-card">
+            <h3>Schedule PTO</h3>
+            <form id="pto-form">
+              <div class="form-grid">
+                <label>
+                  Start date
+                  <input id="startDate" name="startDate" type="date" required>
+                </label>
+                <label>
+                  End date
+                  <input id="endDate" name="endDate" type="date" required>
+                </label>
+                <label>
+                  Hours
+                  <input id="hours" name="hours" type="number" step="0.5" min="0.5" required>
+                </label>
+              </div>
+              <button type="submit">Schedule PTO</button>
+              <div id="pto-result" class="form-result" role="status" hidden></div>
+            </form>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
