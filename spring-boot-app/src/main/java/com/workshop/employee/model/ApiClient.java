@@ -8,13 +8,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
+/** Maps the {@code api_clients} table queried by {@code oauth-token-flow}. */
 @Entity
 @Table(name = "api_clients")
 public class ApiClient {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "client_id", nullable = false, unique = true)
     private String clientId;
@@ -28,7 +29,10 @@ public class ApiClient {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    public Long getId() {
+    protected ApiClient() {
+    }
+
+    public Integer getId() {
         return id;
     }
 

@@ -1,21 +1,20 @@
 package com.workshop.employee.controller;
 
-import com.workshop.employee.dto.ErrorResponse;
 import com.workshop.employee.service.EmployeeGoalService;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Spring equivalent of the APIKit-routed flow {@code get:\employee\(employeeId)\goals}.
+ * Token validation is applied by {@link com.workshop.employee.config.TokenValidationInterceptor}.
+ */
 @RestController
 @RequestMapping("/api/employee/{employeeId}")
 public class EmployeeGoalController {
-
-    private static final Logger log = LoggerFactory.getLogger(EmployeeGoalController.class);
 
     private final EmployeeGoalService employeeGoalService;
 
@@ -23,18 +22,9 @@ public class EmployeeGoalController {
         this.employeeGoalService = employeeGoalService;
     }
 
-    @GetMapping("/goals")
-    public ResponseEntity<?> getGoals(@PathVariable String employeeId) {
-        log.info("Processing request for employee goals: {}", employeeId);
-
-        List<String> goals = employeeGoalService.getGoals(employeeId);
-
-        if (goals.isEmpty()) {
-            log.warn("No goals found for employee: {}", employeeId);
-            return ResponseEntity.status(404)
-                    .body(new ErrorResponse("No goals found for employee " + employeeId));
-        }
-
-        return ResponseEntity.ok(goals);
+    /** 200: bare JSON array of goal strings ({@code payload map $.goal}). */
+    @GetMapping(value = "/goals", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<String> getGoals(@PathVariable String employeeId) {
+        return employeeGoalService.getGoals(employeeId);
     }
 }

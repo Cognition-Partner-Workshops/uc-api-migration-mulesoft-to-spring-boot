@@ -9,13 +9,18 @@ import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Maps the {@code employee_goals} table. The Mule flow selects a column named
+ * {@code goal}; the schema shipped with this repo ({@code V1__create_tables.sql})
+ * names it {@code goal_description}, so that is what the entity binds to.
+ */
 @Entity
 @Table(name = "employee_goals")
 public class EmployeeGoal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "employee_id", nullable = false)
     private String employeeId;
@@ -32,7 +37,10 @@ public class EmployeeGoal {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    public Long getId() {
+    protected EmployeeGoal() {
+    }
+
+    public Integer getId() {
         return id;
     }
 
